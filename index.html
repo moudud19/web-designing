@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIZ MEDIA - Automated Quiz Streaming System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Dashboard View -->
+        <div id="dashboardView" class="view active">
+            <div class="container">
+                <!-- Header -->
+                <header class="header">
+                    <div class="logo">
+                        <h1>🎯 QUIZ MEDIA</h1>
+                        <p class="subtitle">Automated Quiz Streaming System</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="settingsBtn">⚙️ Settings</button>
+                        <button class="btn btn-secondary" id="fullscreenBtn">🖥️ Fullscreen</button>
+                    </div>
+                </header>
+
+                <!-- Upload Section -->
+                <section class="section upload-section">
+                    <h2>📦 Upload Question Package</h2>
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="fileInput" accept=".json,.csv" style="display: none;">
+                        <div class="upload-content">
+                            <p>📁 Drag & Drop JSON/CSV files here</p>
+                            <p class="text-muted">or</p>
+                            <button class="btn btn-primary" id="browseBtn">Browse Files</button>
+                        </div>
+                    </div>
+                    <div id="uploadStatus" style="display: none;" class="upload-status">
+                        <p id="uploadMessage"></p>
+                    </div>
+                </section>
+
+                <!-- Packages List -->
+                <section class="section packages-section">
+                    <h2>📚 Saved Question Packages</h2>
+                    <div id="packagesList" class="packages-grid">
+                        <!-- Packages will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Quick Start -->
+                <section class="section quick-start">
+                    <h2>⚡ Quick Start</h2>
+                    <button class="btn btn-large btn-success" id="startBtn" disabled>
+                        ▶️ Start Quiz
+                    </button>
+                </section>
+            </div>
+        </div>
+
+        <!-- Quiz View -->
+        <div id="quizView" class="view">
+            <div class="quiz-container">
+                <!-- Question Display -->
+                <div class="question-area">
+                    <div class="question-text" id="questionText"></div>
+                    <div class="question-meta" id="questionMeta"></div>
+                </div>
+
+                <!-- Countdown Timer -->
+                <div class="timer-container" id="timerContainer">
+                    <div class="timer-display" id="timerDisplay">5</div>
+                    <div class="timer-ring" id="timerRing"></div>
+                </div>
+
+                <!-- Answer Box -->
+                <div class="answer-container" id="answerContainer" style="display: none;">
+                    <div class="answer-box">
+                        <span class="answer-label">ANSWER</span>
+                        <div class="answer-text" id="answerText"></div>
+                    </div>
+                </div>
+
+                <!-- Quiz Controls -->
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" id="pauseBtn">⏸️ Pause</button>
+                    <button class="btn btn-danger" id="exitBtn">❌ Exit</button>
+                    <div class="quiz-progress">
+                        <span id="progressText">Question 0/0</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Streaming Info -->
+                <div class="streaming-info" id="streamingInfo" style="display: none;">
+                    <span>🔴 STREAMING</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>⚙️ Settings</h2>
+                    <button class="close-btn" id="closeSettingsBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Voice Settings -->
+                    <div class="setting-group">
+                        <label>🎤 Voice Language</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="language" value="en-US" checked> English</label>
+                            <label><input type="radio" name="language" value="bn-BD"> Bangla</label>
+                        </div>
+                    </div>
+
+                    <!-- Voice Speed -->
+                    <div class="setting-group">
+                        <label>🐢 Voice Speed</label>
+                        <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.1" value="1" class="slider">
+                        <span id="speedValue">1x</span>
+                    </div>
+
+                    <!-- Timer Duration -->
+                    <div class="setting-group">
+                        <label>⏱️ Countdown Duration (seconds)</label>
+                        <input type="number" id="timerDuration" min="1" max="30" value="5" class="input-field">
+                    </div>
+
+                    <!-- Answer Display Time -->
+                    <div class="setting-group">
+                        <label>👁️ Answer Display Time (seconds)</label>
+                        <input type="number" id="answerTime" min="1" max="10" value="2" class="input-field">
+                    </div>
+
+                    <!-- Text-to-Speech Toggle -->
+                    <div class="setting-group">
+                        <label><input type="checkbox" id="enableTTS" checked> Enable Text-to-Speech</label>
+                    </div>
+
+                    <!-- Sound Effects Toggle -->
+                    <div class="setting-group">
+                        <label><input type="checkbox" id="enableSFX" checked> Enable Sound Effects</label>
+                    </div>
+
+                    <!-- Loop Playback -->
+                    <div class="setting-group">
+                        <label><input type="checkbox" id="loopPlayback"> Loop Playback</label>
+                    </div>
+
+                    <!-- Auto Next Package -->
+                    <div class="setting-group">
+                        <label><input type="checkbox" id="autoNextPackage"> Auto Next Package</label>
+                    </div>
+
+                    <!-- Streaming Settings -->
+                    <div class="setting-group">
+                        <h3>🎥 Streaming Settings</h3>
+                        <label>Streaming Mode</label>
+                        <select id="streamingMode" class="input-field">
+                            <option value="local">Local Display</option>
+                            <option value="obs">OBS Studio</option>
+                            <option value="youtube">YouTube Live</option>
+                            <option value="facebook">Facebook Live</option>
+                        </select>
+                    </div>
+
+                    <!-- RTMP Settings -->
+                    <div class="setting-group" id="rtmpSettings" style="display: none;">
+                        <label>RTMP Server URL</label>
+                        <input type="text" id="rtmpUrl" placeholder="rtmp://example.com/live/..." class="input-field">
+                    </div>
+
+                    <!-- YouTube Settings -->
+                    <div class="setting-group" id="youtubeSettings" style="display: none;">
+                        <label>YouTube API Key</label>
+                        <input type="password" id="youtubeKey" placeholder="Your YouTube API Key" class="input-field">
+                    </div>
+
+                    <!-- Facebook Settings -->
+                    <div class="setting-group" id="facebookSettings" style="display: none;">
+                        <label>Facebook Access Token</label>
+                        <input type="password" id="facebookToken" placeholder="Your Facebook Access Token" class="input-field">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="saveSettingsBtn">💾 Save Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pause Modal -->
+        <div id="pauseModal" class="modal">
+            <div class="modal-content pause-modal-content">
+                <h2>⏸️ PAUSED</h2>
+                <p>Quiz is paused</p>
+                <div class="button-group">
+                    <button class="btn btn-primary" id="resumeBtn">▶️ Resume</button>
+                    <button class="btn btn-danger" id="exitPauseBtn">❌ Exit to Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="tickSound" preload="auto"></audio>
+    <audio id="completeSound" preload="auto"></audio>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
