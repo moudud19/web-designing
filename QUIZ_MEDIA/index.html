@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIZ MEDIA - Automated Quiz Streaming System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Control Panel -->
+    <div id="controlPanel" class="control-panel">
+        <div class="panel-header">
+            <h1>QUIZ MEDIA</h1>
+            <button class="btn-close" onclick="toggleControlPanel()">×</button>
+        </div>
+
+        <!-- Package Upload Section -->
+        <div class="panel-section">
+            <h3>Package Management</h3>
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="fileInput" accept=".json,.csv" multiple hidden>
+                <div class="upload-content">
+                    <p>📁 Drop files or click to upload</p>
+                    <small>Supports JSON & CSV files</small>
+                </div>
+            </div>
+            <div id="packageList" class="package-list">
+                <p class="empty-message">No packages loaded</p>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="panel-section">
+            <h3>Settings</h3>
+            
+            <label class="setting-item">
+                <span>Question Voice:</span>
+                <select id="questionVoice">
+                    <option value="en-US">English (US)</option>
+                    <option value="en-GB">English (UK)</option>
+                    <option value="bn-BD">Bangla (Bangladesh)</option>
+                    <option value="hi-IN">Hindi (India)</option>
+                </select>
+            </label>
+
+            <label class="setting-item">
+                <span>Answer Voice:</span>
+                <select id="answerVoice">
+                    <option value="en-US">English (US)</option>
+                    <option value="en-GB">English (UK)</option>
+                    <option value="bn-BD">Bangla (Bangladesh)</option>
+                    <option value="hi-IN">Hindi (India)</option>
+                </select>
+            </label>
+
+            <label class="setting-item">
+                <span>Voice Speed:</span>
+                <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.1" value="1">
+                <span id="speedValue">1x</span>
+            </label>
+
+            <label class="setting-item">
+                <span>Countdown Duration:</span>
+                <input type="number" id="countdownDuration" min="1" max="30" value="5">
+                <span>seconds</span>
+            </label>
+
+            <label class="setting-item">
+                <span>Answer Display Time:</span>
+                <input type="number" id="answerDisplayTime" min="1" max="10" value="2">
+                <span>seconds</span>
+            </label>
+
+            <label class="setting-item">
+                <input type="checkbox" id="loopPlayback">
+                <span>Loop Playback</span>
+            </label>
+
+            <label class="setting-item">
+                <input type="checkbox" id="obsMode">
+                <span>OBS Streaming Mode</span>
+            </label>
+
+            <label class="setting-item">
+                <input type="checkbox" id="muteSound">
+                <span>Mute Sound Effects</span>
+            </label>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="panel-section">
+            <h3>Controls</h3>
+            <div class="button-group">
+                <button class="btn btn-primary" id="startBtn" onclick="startQuiz()">▶ Start Quiz</button>
+                <button class="btn btn-secondary" id="pauseBtn" onclick="pauseQuiz()" disabled>⏸ Pause</button>
+                <button class="btn btn-danger" id="stopBtn" onclick="stopQuiz()" disabled>⏹ Stop</button>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-info" onclick="toggleFullscreen()">🖥 Fullscreen</button>
+                <button class="btn btn-info" onclick="exportStats()">📊 Export Stats</button>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="panel-section">
+            <h3>Session Stats</h3>
+            <div class="stats">
+                <div class="stat-item">
+                    <span>Current Package:</span>
+                    <span id="currentPackage">-</span>
+                </div>
+                <div class="stat-item">
+                    <span>Questions Played:</span>
+                    <span id="questionsPlayed">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Elapsed Time:</span>
+                    <span id="elapsedTime">00:00:00</span>
+                </div>
+                <div class="stat-item">
+                    <span>Status:</span>
+                    <span id="status" class="status-idle">Idle</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Display Area -->
+    <div id="quizContainer" class="quiz-container">
+        <!-- Question Display -->
+        <div class="question-area">
+            <div class="question-content">
+                <p id="questionText" class="question-text">Ready for quiz?</p>
+                <p id="questionTopic" class="question-topic"></p>
+            </div>
+        </div>
+
+        <!-- Countdown Timer -->
+        <div id="countdownContainer" class="countdown-container">
+            <div class="countdown-circle">
+                <svg class="countdown-svg" viewBox="0 0 100 100">
+                    <circle class="countdown-bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="countdown-progress" cx="50" cy="50" r="45"></circle>
+                </svg>
+                <div class="countdown-text">
+                    <span id="countdownNumber">5</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Answer Display -->
+        <div class="answer-area">
+            <div id="answerBox" class="answer-box">
+                <p id="answerText" class="answer-text">Answer</p>
+            </div>
+        </div>
+
+        <!-- Question Counter -->
+        <div class="question-counter">
+            <span id="questionNumber">Q1</span> / <span id="totalQuestions">0</span>
+        </div>
+
+        <!-- Toggle Control Panel Button -->
+        <button class="btn-toggle-panel" onclick="toggleControlPanel()">⚙️ Controls</button>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="tickSound" preload="auto"></audio>
+    <audio id="completeSound" preload="auto"></audio>
+
+    <!-- Scripts -->
+    <script src="questions.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
